@@ -20,7 +20,6 @@ let viewMonth;
 let selectedDate = null;
 let isSubmitting = false;
 let blockedRows = []; // blocked windows set by the admin
-const COOLDOWN_MS = 60 * 1000;
 
 // =========== Helpers ==============
 // "03:00 - 04:00 PM" and "03:00 - 4:00 PM" count as the same slot
@@ -228,12 +227,6 @@ async function handleBookingSubmit(
   meetingType,
   details,
 ) {
-  // Block double clicks and rapid repeats
-  const last = Number(localStorage.getItem("lastBooking") || 0);
-  if (isSubmitting || Date.now() - last < COOLDOWN_MS) {
-    alert("Please wait a minute before submitting again.");
-    return;
-  }
   isSubmitting = true;
 
   try {
@@ -270,9 +263,6 @@ async function handleBookingSubmit(
       meeting_type: meetingType,
       message: details,
     });
-
-    // Remember the time of this successful booking
-    localStorage.setItem("lastBooking", Date.now());
 
     alert(
       `Thank you, ${name}! Your appointment has been saved and confirmed via email.`,
@@ -335,9 +325,9 @@ function setupAppointmentSubmission() {
       return;
     }
 
-    if (phoneInput && !/^\+?[0-9]{7,15}$/.test(phoneValue)) {
+    if (phoneInput && !/^\+?[0-9]{11}$/.test(phoneValue)) {
       phoneInput.classList.add("input-error");
-      alert("Please enter a valid phone number (7 to 15 digits).");
+      alert("Please enter a valid phone number (11 digits).");
       return;
     }
 

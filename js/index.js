@@ -12,18 +12,27 @@ function imgSrc(url) {
 
 // Build one gallery card from a database row
 function buildCard(item) {
-  const categoryLabel = item.category === "canvas" ? "Canvas Art" : "Mural";
+  const categoryNames = {
+    mural: "Mural",
+    canvas: "Canvas Art",
+    others: "Others",
+  };
+  const categoryLabel = categoryNames[item.category] || "Mural";
 
   const tags = [`<span class="pill pill-accent">${categoryLabel}</span>`];
   if (item.is_featured) tags.push(`<span class="pill">Featured</span>`);
   if (item.is_sold) tags.push(`<span class="pill">Sold</span>`);
+  if (item.not_for_sale) tags.push(`<span class="pill">Not for Sale</span>`);
   if (item.year) tags.push(`<span class="pill">${esc(item.year)}</span>`);
 
+  // Location and size on one line, e.g. "Bulacan • 24" x 36""
+  const infoText = [item.location, item.dimensions].filter(Boolean).join(" • ");
+
   const metaParts = [];
-  if (item.dimensions) {
-    metaParts.push(`<span class="dim-label">${esc(item.dimensions)}</span>`);
+  if (infoText) {
+    metaParts.push(`<span class="dim-label">${esc(infoText)}</span>`);
   }
-  if (item.category === "canvas" && !item.is_sold) {
+  if (item.category === "canvas" && !item.is_sold && !item.not_for_sale) {
     metaParts.push(
       `<a href="html/Commission.html" class="btn btn-outline">Acquire</a>`,
     );

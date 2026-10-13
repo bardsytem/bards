@@ -1,8 +1,89 @@
 let isSubmitting = false;
-const COOLDOWN_MS = 60 * 1000;
 
 // Prices saved by the admin, filled in from Supabase. Key: "category|scale"
 let livePrices = {};
+
+// Makes text safe to place inside HTML
+function esc(text) {
+  const div = document.createElement("div");
+  div.textContent = text ?? "";
+  return div.innerHTML.replace(/"/g, "&quot;");
+}
+
+// Show the price next to an artwork's name only when Canvas Piece is picked
+function updatePieceLabels(showPrice, defaultMaterials) {
+  const select = document.getElementById("artwork-type-select");
+  if (!select) return;
+
+  Array.from(select.options).forEach((option) => {
+    if (!option.dataset.title) return; // skip the "Choose an artwork" line
+
+    const price = option.dataset.price;
+    if (showPrice && price !== "") {
+      // An artwork without its own materials price uses the default one
+      const materials =
+        option.dataset.materials === ""
+          ? defaultMaterials
+          : Number(option.dataset.materials);
+      const total = Number(price) + materials;
+      option.textContent =
+        option.dataset.title + " - ₱" + total.toLocaleString("en-US");
+    } else {
+      option.textContent = option.dataset.title;
+    }
+  });
+}
+
+// Fill the dropdown with the canvas pieces Bard added in the gallery
+async function loadCanvasPieces() {
+  const select = document.getElementById("artwork-type-select");
+  if (!select) return;
+
+  const piecesResult = await supabaseClient
+    .from("gallery_items")
+    .select("id, title, is_sold, not_for_sale")
+    .eq("category", "canvas")
+    .eq("is_visible", true)
+    .order("id", { ascending: false });
+
+  const pricesResult = await supabaseClient
+    .from("canvas_prices")
+    .select("item_id, price, materials");
+
+  if (piecesResult.error || pricesResult.error) {
+    console.error(piecesResult.error || pricesResult.error);
+    select.innerHTML = `<option value="">Could not load pieces</option>`;
+    return;
+  }
+
+  // Look up a price by artwork id
+  const priceById = {};
+  pricesResult.data.forEach((row) => {
+    priceById[row.item_id] = {
+      base: Number(row.price),
+      materials: row.materials === null ? "" : Number(row.materials),
+    };
+  });
+
+  let html = `<option value="">Choose an artwork...</option>`;
+  piecesResult.data.forEach((piece) => {
+    // Sold or not-for-sale pieces can't be bought, so skip them
+    if (piece.is_sold || piece.not_for_sale) return;
+
+    const own = priceById[piece.id];
+
+    // The prices and title are stored on the option itself
+    html += `<option value="${piece.id}"
+                     data-title="${esc(piece.title)}"
+                     data-price="${own ? own.base : ""}"
+                     data-materials="${own ? own.materials : ""}">
+               ${esc(piece.title)}
+             </option>`;
+  });
+
+  select.innerHTML = html;
+  updateCalculation();
+}
 
 // The buttons have no ids, so match them by their text / position
 const CATEGORY_KEYS = {
@@ -71,13 +152,31 @@ function updateCalculation() {
       `${categoryKey(category)}|${noScale ? "none" : scaleKey(scale)}`
     ];
 
-  const price1 = saved ? saved.base : Number(category.dataset.price);
+  let price1 = saved ? saved.base : Number(category.dataset.price);
+
   const price2 = noScale
     ? 0
     : saved
       ? saved.scaleFee
       : Number(scale.dataset.price);
-  const price3 = saved ? saved.materials : Number(category.dataset.coatPrice);
+  let price3 = saved ? saved.materials : Number(category.dataset.coatPrice);
+
+  // Step 3 is always visible, but only a Canvas Piece uses the artwork's own prices
+  const isCanvas = categoryKey(category) === "canvas";
+  const pieceSelect = document.getElementById("artwork-type-select");
+
+  const typeGroup = pieceSelect ? pieceSelect.closest(".field-group") : null;
+  if (typeGroup) typeGroup.style.display = "";
+
+  updatePieceLabels(isCanvas, price3);
+
+  if (isCanvas && pieceSelect) {
+    const option = pieceSelect.options[pieceSelect.selectedIndex];
+    if (option && option.dataset.price) price1 = Number(option.dataset.price);
+    if (option && option.dataset.materials) {
+      price3 = Number(option.dataset.materials);
+    }
+  }
 
   const money = (n) => n.toLocaleString("en-US", { minimumFractionDigits: 2 });
 
@@ -117,6 +216,22 @@ function setupOptionGroupSelection() {
       });
     });
   });
+
+  const select = document.getElementById("artwork-type-select");
+  const customBtn = document.getElementById("artwork-custom-btn");
+  if (!select || !customBtn) return;
+
+  // Picking a piece turns off "Custom / Others"
+  select.addEventListener("change", () => {
+    customBtn.classList.remove("is-active");
+    updateCalculation();
+  });
+
+  // Picking "Custom / Others" clears the piece, so the default price is used
+  customBtn.addEventListener("click", () => {
+    select.value = "";
+    updateCalculation();
+  });
 }
 
 // Function to check if a value contains only digits
@@ -142,12 +257,6 @@ async function handleCommissionSubmit(
   cost,
   details,
 ) {
-  // Block double clicks and rapid repeats
-  const last = Number(localStorage.getItem("lastCommission") || 0);
-  if (isSubmitting || Date.now() - last < COOLDOWN_MS) {
-    alert("Please wait a minute before submitting again.");
-    return;
-  }
   isSubmitting = true;
 
   try {
@@ -178,9 +287,6 @@ async function handleCommissionSubmit(
       estimated_cost: cost,
       message: details,
     });
-
-    // Remember the time of this successful submission
-    localStorage.setItem("lastCommission", Date.now());
 
     alert(
       `Thank you ${name}! Your commission quote has been stored and emailed.`,
@@ -247,6 +353,14 @@ function setupCommissionSubmission() {
         .querySelector(".field-group:nth-of-type(1) .option.is-active")
         ?.textContent.trim() || "Mural";
 
+    // If an artwork was picked, record it next to the category
+    let categoryLabel = activeCategory;
+    const pieceSelect = document.getElementById("artwork-type-select");
+    if (pieceSelect && pieceSelect.value) {
+      const option = pieceSelect.options[pieceSelect.selectedIndex];
+      categoryLabel = activeCategory + " - " + option.dataset.title;
+    }
+
     const scaleButton = document.querySelector(
       ".field-group:nth-of-type(2) .option.is-active",
     );
@@ -283,7 +397,7 @@ function setupCommissionSubmission() {
       customerPhone,
       customerEmail,
       customerAddress,
-      activeCategory,
+      categoryLabel,
       activeScale,
       estimatedCost,
       details,
@@ -297,4 +411,5 @@ document.addEventListener("DOMContentLoaded", () => {
   setupCommissionSubmission();
   updateCalculation();
   loadPrices();
+  loadCanvasPieces();
 });
