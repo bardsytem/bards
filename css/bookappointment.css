@@ -1,0 +1,462 @@
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  background: #0e0e0d;
+  color: #f2efe9;
+  font-family: Arial, sans-serif;
+  line-height: 1.5;
+}
+
+img {
+  max-width: 100%;
+  display: block;
+}
+a {
+  color: inherit;
+  text-decoration: none;
+  font-family:
+    Space Mono,
+    monospace;
+}
+
+.display {
+  font-weight: 800;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.1;
+}
+
+.page-label {
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  color: #979186;
+  padding: 12px 32px 0;
+}
+
+/* ---------- Top bar ---------- */
+.top-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 20px 32px;
+  border-bottom: 1px solid #2c2a26;
+  position: sticky;
+  top: 0;
+  background: rgba(11, 11, 10, 0.92);
+  backdrop-filter: blur(6px);
+  z-index: 20;
+}
+.logo-container {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+.logo-mark {
+  width: 20px;
+  height: 20px;
+}
+
+.bards-logo {
+  width: 30px;
+  height: 30px;
+  margin-right: 8px;
+  flex-shrink: 0;
+}
+
+.logo-container h1 {
+  font-size: 16px;
+  font-weight: 800;
+  text-transform: uppercase;
+  margin: 0;
+}
+.nav-links {
+  display: flex;
+  gap: 4px;
+  flex: 1;
+  justify-content: center;
+}
+.nav-link {
+  font-size: 13px;
+  font-weight: 600;
+  font-family:
+    Space Mono,
+    monospace;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #9c968c;
+  padding: 8px 14px;
+  border-radius: 3px;
+  transition:
+    color 0.15s ease,
+    background 0.15s ease;
+}
+.nav-link:hover {
+  color: #f2efe9;
+}
+.nav-link.is-active {
+  color: #0e0e0d;
+  background: #ff5a1f;
+}
+.top-actions {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.btn {
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 9px 16px;
+  border-radius: 3px;
+  border: 1px solid #ff5a1f;
+  cursor: pointer;
+}
+.btn-solid {
+  background: #ff5a1f;
+  color: #0e0e0d;
+}
+.btn-solid:hover {
+  background: #d6491a;
+}
+.btn-block {
+  width: 100%;
+  text-align: center;
+  margin-top: 16px;
+}
+.avatar {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  border: 1px solid #2c2a26;
+  background: #1a1917;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  font-weight: 700;
+  color: #979186;
+}
+
+.pill {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  padding: 6px 12px;
+  border-radius: 3px;
+  border: 1px solid #2c2a26;
+  color: #979186;
+}
+.pill-accent {
+  background: #ff5a1f;
+  color: #0e0e0d;
+  border-color: #ff5a1f;
+}
+
+/* ---------- Booking layout ---------- */
+.booking-layout {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 32px 32px 56px;
+  display: grid;
+  grid-template-columns: 1fr 1.3fr 1fr;
+  gap: 24px;
+  align-items: start;
+}
+
+/* Left column */
+.intro-col h2 {
+  font-size: 34px;
+  margin: 14px 0 12px;
+}
+.intro-col p {
+  color: #979186;
+  font-size: 14px;
+  margin: 0 0 22px;
+}
+
+.info-list {
+  list-style: none;
+  margin: 0 0 28px;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.info-list li {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 13px;
+  color: #f2efe9;
+}
+.info-icon {
+  color: #ff5a1f;
+  font-size: 8px;
+}
+
+blockquote {
+  margin: 0;
+  padding: 16px;
+  border: 1px solid #2c2a26;
+  border-radius: 3px;
+  background: #1a1917;
+  font-size: 13px;
+  font-style: italic;
+  color: #979186;
+}
+blockquote span {
+  display: block;
+  margin-top: 10px;
+  font-style: normal;
+  font-size: 11px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #f2efe9;
+}
+
+/* Middle column: calendar */
+.calendar-col {
+  border: 1px solid #2c2a26;
+  border-radius: 3px;
+  background: #1a1917;
+  padding: 18px;
+}
+
+.calendar-head {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 13px;
+  font-weight: 700;
+  margin-bottom: 14px;
+}
+.calendar-nav {
+  display: flex;
+  gap: 6px;
+}
+.calendar-nav button {
+  width: 24px;
+  height: 24px;
+  border: 1px solid #2c2a26;
+  background: transparent;
+  color: #f2efe9;
+  border-radius: 3px;
+  cursor: pointer;
+}
+
+.calendar-grid {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 4px;
+  text-align: center;
+}
+.calendar-weekdays {
+  font-size: 10px;
+  color: #979186;
+  margin-bottom: 8px;
+}
+.calendar-days > span,
+.calendar-days .calendar-day {
+  font-size: 12px;
+  padding: 8px 0;
+  border-radius: 3px;
+}
+.calendar-days .calendar-day {
+  width: 100%;
+  border: 0;
+  background: transparent;
+  color: inherit;
+  font-family: inherit;
+  cursor: pointer;
+}
+.calendar-days .calendar-day:hover:not(.is-selected) {
+  background: #2c2a26;
+}
+.calendar-days .calendar-day:focus-visible {
+  outline: 2px solid #ff5a1f;
+  outline-offset: 1px;
+}
+.calendar-days .is-muted {
+  color: #4a463f;
+}
+.calendar-days .is-selected {
+  background: #ff5a1f;
+  color: #0e0e0d;
+  font-weight: 700;
+}
+
+.slots-head {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #979186;
+  margin: 18px 0 10px;
+}
+.slots-list {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.slot {
+  text-align: left;
+  font-size: 13px;
+  padding: 10px 12px;
+  border: 1px solid #2c2a26;
+  border-radius: 3px;
+  background: #24221e;
+  color: #f2efe9;
+  cursor: pointer;
+}
+
+/* Right column: details */
+.details-col {
+  border: 1px solid #2c2a26;
+  border-radius: 3px;
+  background: #1a1917;
+  padding: 18px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.details-label {
+  font-size: 10px;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: #979186;
+  margin-bottom: 4px;
+}
+
+.radio-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid #2c2a26;
+  border-radius: 3px;
+  cursor: pointer;
+}
+.radio-row input {
+  margin-top: 3px;
+  accent-color: #ff5a1f;
+}
+.radio-row strong {
+  display: block;
+  font-size: 13px;
+}
+.radio-row em {
+  display: block;
+  font-style: normal;
+  font-size: 11px;
+  color: #979186;
+  margin-top: 2px;
+}
+
+.field {
+  background: #24221e;
+  border: 1px solid #2c2a26;
+  border-radius: 3px;
+  color: #f2efe9;
+  padding: 10px 12px;
+  font-size: 13px;
+  font-family: inherit;
+}
+.field:focus {
+  outline: 2px solid #ff5a1f;
+  outline-offset: 1px;
+}
+
+/* ---------- Footer ---------- */
+.site-footer {
+  border-top: 1px solid #2c2a26;
+  padding: 20px 32px;
+}
+.footer-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+
+.footer-info {
+  display: flex;
+  justify-content: center;
+}
+
+.footer-info span {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+.footer-tag {
+  font-size: 11px;
+  color: #979186;
+}
+
+/* Style applied when the email input format is invalid */
+.field.input-error {
+  border-color: #e53e3e;
+  outline: none;
+}
+
+@media (max-width: 960px) {
+  .booking-layout {
+    grid-template-columns: 1fr;
+  }
+  .top-bar {
+    flex-wrap: wrap;
+  }
+  .nav-links {
+    order: 3;
+    width: 100%;
+    justify-content: flex-start;
+  }
+}
+/* ---------- Live calendar states ---------- */
+
+/* Past / unavailable days */
+.calendar-days .calendar-day.is-past,
+.calendar-days .calendar-day:disabled {
+  color: #4a463f;
+  text-decoration: line-through;
+  cursor: not-allowed;
+  background: transparent;
+}
+
+/* Today marker */
+.calendar-days .calendar-day.is-today:not(.is-selected) {
+  outline: 1px solid #ff5a1f;
+  outline-offset: -1px;
+}
+
+/* Disabled month arrow */
+.calendar-nav button:disabled {
+  opacity: 0.3;
+  cursor: not-allowed;
+}
+
+/* Time slots */
+.slot.is-selected {
+  background: #ff5a1f;
+  border-color: #ff5a1f;
+  color: #0e0e0d;
+  font-weight: 700;
+}
+
+.slot:disabled {
+  opacity: 0.35;
+  text-decoration: line-through;
+  cursor: not-allowed;
+}

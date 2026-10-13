@@ -1,0 +1,146 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bard's Canvas | Book Appointment</title>
+    <link rel="stylesheet" href="../css/bookappointment.css" />
+  </head>
+  <body>
+    <header class="top-bar">
+      <div class="logo-container">
+        <img
+          src="../assets/bards-logo.png"
+          alt="Bard's Canvas Logo"
+          class="bards-logo"
+        />
+        <h1>Bard's Canvas</h1>
+      </div>
+
+      <nav class="nav-links">
+        <a href="../index.html" class="nav-link">Gallery</a>
+        <a href="BookAppointment.html" class="nav-link is-active"
+          >Book Appointment</a
+        >
+        <a href="Commission.html" class="nav-link">Commission & Quotation</a>
+      </nav>
+    </header>
+
+    <main class="booking-layout">
+      <!-- Left: intro -->
+      <section class="intro-col">
+        <span class="pill pill-accent">Direct Studio Schedule</span>
+        <h2 class="display">BOOK J.<br />ANDREW</h2>
+        <p>
+          All slots must be booked at least 1 day before the desired time in PHT
+          / GMT+8..
+        </p>
+
+        <ul class="info-list">
+          <li>Studio / wall inspection / Zoom</li>
+          <li>45-minute deep dive &amp; moodboard</li>
+          <li>Instant booking confirmation</li>
+        </ul>
+
+        <blockquote>
+          "Every surface has a pulse. We don't paint over it; we converse with
+          it."
+          <span>&mdash; J. Andrew (Bard)</span>
+        </blockquote>
+      </section>
+
+      <!--calendar -->
+      <section class="calendar-col">
+        <div class="calendar-head">
+          <span class="calendar-month">October 2026</span>
+          <div class="calendar-nav">
+            <button type="button" aria-label="Previous month">&lsaquo;</button>
+            <button type="button" aria-label="Next month">&rsaquo;</button>
+          </div>
+        </div>
+
+        <div class="calendar-grid calendar-weekdays">
+          <span>SU</span><span>MO</span><span>TU</span><span>WE</span
+          ><span>TH</span><span>FR</span><span>SA</span>
+        </div>
+
+        <div class="calendar-grid calendar-days"></div>
+
+        <div class="slots-head">Time Slots</div>
+        <div class="slots-list">
+          <button type="button" class="slot">10:00 - 11:00 AM</button>
+          <button type="button" class="slot">01:00 - 2:00 PM</button>
+          <button type="button" class="slot">03:00 - 4:00 PM</button>
+          <button type="button" class="slot">05:00 - 6:00 PM</button>
+        </div>
+      </section>
+
+      <!-- Right: details -->
+      <section class="details-col">
+        <div class="details-label">Meeting Classification</div>
+
+        <label class="radio-row">
+          <input type="radio" name="meeting-type" checked />
+          <span>
+            <strong>On-Site Wall Inspection</strong>
+            <em>For outdoor &amp; business facade murals</em>
+          </span>
+        </label>
+
+        <label class="radio-row">
+          <input type="radio" name="meeting-type" />
+          <span>
+            <strong>Virtual Consultation</strong>
+            <em>For project pitching via Google Meet</em>
+          </span>
+        </label>
+
+        <label class="radio-row">
+          <input type="radio" name="meeting-type" />
+          <span>
+            <strong>Studio Visit</strong>
+            <em>Canvas art previews &amp; sizing</em>
+          </span>
+        </label>
+
+        <input type="text" placeholder="Name" class="field" />
+        <input type="email" placeholder="username@email.io" class="field" />
+        <input
+          type="tel"
+          id="client-phone"
+          placeholder="Contact No. (e.g. 09171234567)"
+          class="field"
+        />
+        <input
+          type="text"
+          placeholder="Provide additional details (Meeting links, Location... etc)"
+          class="field"
+        />
+
+        <button type="button" class="btn btn-solid btn-block">
+          Confirm Appointment
+        </button>
+      </section>
+    </main>
+
+    <footer class="site-footer">
+      <div class="footer-container">
+        <div class="footer-info">
+          <img
+            src="../assets/bards-logo.png"
+            alt="Bard's Canvas Logo"
+            class="bards-logo"
+          />
+          <span>Bard's Canvas &amp; Murals</span>
+        </div>
+        <span class="footer-tag"
+          >&copy;J. Andrew (Bard). Concrete to canvas.</span
+        >
+      </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+    <script src="../js/config.js"></script>
+    <script src="../js/bookappointment.js"></script>
+  </body>
+</html>
