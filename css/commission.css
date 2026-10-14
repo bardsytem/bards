@@ -338,6 +338,26 @@ textarea.field {
   text-transform: uppercase;
   letter-spacing: 0.5px;
 }
+.footer-info {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.footer-info .bards-logo {
+  width: 30px;
+  height: 30px;
+  margin: 0;
+  object-fit: contain;
+}
+
+.footer-info span {
+  font-size: 12px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
 .footer-tag {
   font-size: 11px;
   color: #979186;
@@ -368,4 +388,76 @@ textarea.field {
   cursor: not-allowed;
   background: #1a1a1a;
   color: #777;
+}
+
+/* =====================================================
+   Mobile layout (keep this block at the very bottom)
+   ===================================================== */
+
+/* Top bar: logo on row 1, 3 equal nav buttons on row 2 */
+@media (max-width: 880px) {
+  .top-bar {
+    flex-wrap: wrap;
+    padding: 12px 16px;
+    gap: 10px 12px;
+  }
+
+  .nav-links {
+    order: 3;
+    flex: none;
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .nav-link {
+    text-align: center;
+    padding: 9px 4px;
+    font-size: 11px;
+    white-space: nowrap;
+    border: 1px solid #2c2a26;
+  }
+
+  .nav-link.is-active {
+    border-color: #ff5a1f;
+  }
+}
+
+@media (max-width: 600px) {
+  .logo-container h1 {
+    font-size: 14px;
+  }
+
+  .quote-layout {
+    padding: 20px 16px 40px;
+    gap: 20px;
+  }
+
+  .form-col h2 {
+    font-size: 26px;
+  }
+
+  .option {
+    flex: 1 1 calc(50% - 8px);
+    padding: 10px 8px;
+    font-size: 11px;
+  }
+
+  .select-field {
+    flex-basis: 100%;
+  }
+
+  .total-num {
+    font-size: 28px;
+  }
+
+  .site-footer {
+    padding: 20px 16px;
+  }
+
+  .footer-container {
+    flex-direction: column;
+    align-items: flex-start;
+  }
 }

@@ -16,11 +16,10 @@ function updatePieceLabels(showPrice, defaultMaterials) {
   if (!select) return;
 
   Array.from(select.options).forEach((option) => {
-    if (!option.dataset.title) return; // skip the "Choose an artwork" line
+    if (!option.dataset.title) return;
 
     const price = option.dataset.price;
     if (showPrice && price !== "") {
-      // An artwork without its own materials price uses the default one
       const materials =
         option.dataset.materials === ""
           ? defaultMaterials
@@ -34,7 +33,6 @@ function updatePieceLabels(showPrice, defaultMaterials) {
   });
 }
 
-// Fill the dropdown with the canvas pieces Bard added in the gallery
 async function loadCanvasPieces() {
   const select = document.getElementById("artwork-type-select");
   if (!select) return;
@@ -56,7 +54,6 @@ async function loadCanvasPieces() {
     return;
   }
 
-  // Look up a price by artwork id
   const priceById = {};
   pricesResult.data.forEach((row) => {
     priceById[row.item_id] = {
@@ -67,12 +64,10 @@ async function loadCanvasPieces() {
 
   let html = `<option value="">Choose an artwork...</option>`;
   piecesResult.data.forEach((piece) => {
-    // Sold or not-for-sale pieces can't be bought, so skip them
     if (piece.is_sold || piece.not_for_sale) return;
 
     const own = priceById[piece.id];
 
-    // The prices and title are stored on the option itself
     html += `<option value="${piece.id}"
                      data-title="${esc(piece.title)}"
                      data-price="${own ? own.base : ""}"
@@ -85,7 +80,6 @@ async function loadCanvasPieces() {
   updateCalculation();
 }
 
-// The buttons have no ids, so match them by their text / position
 const CATEGORY_KEYS = {
   mural: "mural",
   "canvas piece": "canvas",
@@ -103,12 +97,10 @@ function scaleKey(button) {
   return SCALE_KEYS[Array.from(all).indexOf(button)] || "small";
 }
 
-// Get the latest prices the admin saved
 async function loadPrices() {
   const { data, error } = await supabaseClient.from("pricing").select("*");
 
   if (error) {
-    // Keep the built-in prices from Commission.html as a backup
     console.error("Could not load prices:", error);
     return;
   }
@@ -125,7 +117,6 @@ async function loadPrices() {
   updateCalculation();
 }
 
-// Function to update the running total price on the summary side panel
 function updateCalculation() {
   const category = document.querySelector(
     ".field-group:nth-of-type(1) .option.is-active",
@@ -138,15 +129,12 @@ function updateCalculation() {
   );
   const rows = document.querySelectorAll(".line-item");
 
-  // true when the picked category doesn't need a scale
   const noScale = category.dataset.noScale === "true";
 
-  // disable or enable the scale buttons
   scaleButtons.forEach((btn) => {
     btn.disabled = noScale;
   });
 
-  // Admin prices if saved, otherwise the numbers written in the HTML
   const saved =
     livePrices[
       `${categoryKey(category)}|${noScale ? "none" : scaleKey(scale)}`
@@ -161,7 +149,6 @@ function updateCalculation() {
       : Number(scale.dataset.price);
   let price3 = saved ? saved.materials : Number(category.dataset.coatPrice);
 
-  // Step 3 is always visible, but only a Canvas Piece uses the artwork's own prices
   const isCanvas = categoryKey(category) === "canvas";
   const pieceSelect = document.getElementById("artwork-type-select");
 
@@ -183,7 +170,6 @@ function updateCalculation() {
   rows[0].children[0].textContent = category.dataset.material;
   rows[0].children[1].textContent = money(price1);
 
-  // Canvas pieces have no equipment line, so hide it
   rows[1].style.display = noScale ? "none" : "";
   rows[1].children[0].textContent = scale.dataset.equipment;
   rows[1].children[1].textContent = money(price2);
@@ -196,7 +182,6 @@ function updateCalculation() {
   );
 }
 
-// Function to handle single choice selection inside option groups
 function setupOptionGroupSelection() {
   const optionGroups = document.querySelectorAll(".option-row");
 
@@ -205,13 +190,10 @@ function setupOptionGroupSelection() {
 
     options.forEach((button) => {
       button.addEventListener("click", () => {
-        // Remove highlight from siblings in the same group
         options.forEach((opt) => opt.classList.remove("is-active"));
 
-        // Mark clicked option as active
         button.classList.add("is-active");
 
-        // Recalculate price
         updateCalculation();
       });
     });

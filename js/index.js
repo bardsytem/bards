@@ -1,11 +1,9 @@
-// Makes text safe to place inside HTML
 function esc(text) {
   const div = document.createElement("div");
   div.textContent = text ?? "";
   return div.innerHTML;
 }
 
-// Old images are saved like "assets/x.png", new uploads are full https links
 function imgSrc(url) {
   return url || "";
 }
@@ -25,7 +23,6 @@ function buildCard(item) {
   if (item.not_for_sale) tags.push(`<span class="pill">Not for Sale</span>`);
   if (item.year) tags.push(`<span class="pill">${esc(item.year)}</span>`);
 
-  // Location and size on one line, e.g. "Bulacan • 24" x 36""
   const infoText = [item.location, item.dimensions].filter(Boolean).join(" • ");
 
   const metaParts = [];
@@ -56,7 +53,6 @@ function buildCard(item) {
   `;
 }
 
-// Load artworks from Supabase and replace the hand-written cards
 async function loadGallery() {
   const grid = document.querySelector(".gallery-grid");
   if (!grid || typeof supabaseClient === "undefined") return;
@@ -65,9 +61,8 @@ async function loadGallery() {
     .from("gallery_items")
     .select("*")
     .eq("is_visible", true)
-    .order("id", { ascending: false }); // newest upload first
+    .order("id", { ascending: false });
 
-  // If anything goes wrong, keep the hand-written cards in index.html
   if (error || !data || !data.length) {
     if (error) console.error("Gallery load failed:", error);
     return;
@@ -77,7 +72,6 @@ async function loadGallery() {
   applyFilter(document.querySelector(".filter-tab.is-active"));
 }
 
-// Show or hide cards based on the selected tab
 function applyFilter(button) {
   if (!button) return;
   const selected = button.getAttribute("data-filter");
@@ -105,3 +99,79 @@ document.addEventListener("DOMContentLoaded", () => {
   setupGalleryFilters();
   loadGallery();
 });
+// ----------contact ----------
+(function () {
+  const toast = document.createElement("div");
+  toast.className = "copy-toast";
+  toast.setAttribute("role", "status");
+  document.body.appendChild(toast);
+
+  let timer;
+  function showToast(message) {
+    toast.textContent = message;
+    toast.classList.add("show");
+    clearTimeout(timer);
+    timer = setTimeout(() => toast.classList.remove("show"), 2000);
+  }
+
+  async function copyText(text) {
+    if (navigator.clipboard && window.isSecureContext) {
+      await navigator.clipboard.writeText(text);
+      return;
+    }
+    const box = document.createElement("textarea");
+    box.value = text;
+    box.style.position = "fixed";
+    box.style.opacity = "0";
+    document.body.appendChild(box);
+    box.select();
+    const ok = document.execCommand("copy");
+    box.remove();
+    if (!ok) throw new Error("copy failed");
+  }
+
+  document.querySelectorAll("[data-copy]").forEach((btn) => {
+    btn.addEventListener("click", async () => {
+      try {
+        await copyText(btn.dataset.copy);
+        showToast((btn.dataset.label || "Text") + " copied");
+      } catch (err) {
+        console.error(err);
+        showToast("Could not copy. Please copy it manually.");
+      }
+    });
+  });
+})();
+
+// ---------- Contact info from the admin ----------
+(async function loadContact() {
+  if (typeof supabaseClient === "undefined") return;
+
+  const { data, error } = await supabaseClient
+    .from("site_profile")
+    .select("contact_name, contact_phone, contact_facebook")
+    .eq("id", 1)
+    .maybeSingle();
+
+  if (error || !data) {
+    console.error("Contact info not loaded:", error);
+    return;
+  }
+
+  const fbLink = document.getElementById("contact-fb");
+  const callBtn = document.getElementById("contact-call");
+
+  if (fbLink && data.contact_facebook) {
+    if (/^https?:\/\//i.test(data.contact_facebook)) {
+      fbLink.href = data.contact_facebook;
+    }
+    if (data.contact_name) {
+      document.getElementById("contact-name").textContent = data.contact_name;
+    }
+  }
+
+  if (callBtn && data.contact_phone) {
+    callBtn.dataset.copy = data.contact_phone.replace(/[^0-9+]/g, "");
+    document.getElementById("contact-phone").textContent = data.contact_phone;
+  }
+})();
