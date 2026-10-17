@@ -99,7 +99,8 @@ document.addEventListener("DOMContentLoaded", () => {
   setupGalleryFilters();
   loadGallery();
 });
-// ----------contact ----------
+
+// ---------- Copy to clipboard (contact buttons) ----------
 (function () {
   const toast = document.createElement("div");
   toast.className = "copy-toast";
@@ -143,20 +144,50 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 })();
 
-// ---------- Contact info from the admin ----------
-(async function loadContact() {
+// ---------- Studio profile + contact info from the admin ----------
+(async function loadProfile() {
   if (typeof supabaseClient === "undefined") return;
 
   const { data, error } = await supabaseClient
     .from("site_profile")
-    .select("contact_name, contact_phone, contact_facebook")
+    .select("*")
     .eq("id", 1)
     .maybeSingle();
 
   if (error || !data) {
-    console.error("Contact info not loaded:", error);
+    if (error) console.error("Profile not loaded:", error);
     return;
   }
+
+  const setText = (id, value) => {
+    const el = document.getElementById(id);
+    if (el && value) el.textContent = value;
+  };
+
+  setText("hero-tagline", data.tagline);
+  setText("hero-story", data.story);
+  setText("hero-signature", data.signature_name);
+  setText("hero-location", data.location_tag);
+
+  for (const n of [1, 2, 3]) {
+    setText(`stat${n}-num`, data[`stat${n}_num`]);
+    setText(`stat${n}-label`, data[`stat${n}_label`]);
+  }
+
+  const headline = document.getElementById("hero-headline");
+  if (headline && data.headline) {
+    const match = data.headline.match(/^(.*?)(\S+?)([?!.]*)$/);
+    headline.innerHTML = match
+      ? `${esc(match[1])}<span class="accent">${esc(match[2])}</span>${esc(match[3])}`
+      : esc(data.headline);
+  }
+
+  // Portrait
+  const portrait = document.getElementById("hero-portrait");
+  if (portrait && data.portrait_url) portrait.src = data.portrait_url;
+
+  const status = document.getElementById("hero-status");
+  if (status) status.style.display = data.open_for_commissions ? "" : "none";
 
   const fbLink = document.getElementById("contact-fb");
   const callBtn = document.getElementById("contact-call");
@@ -165,13 +196,11 @@ document.addEventListener("DOMContentLoaded", () => {
     if (/^https?:\/\//i.test(data.contact_facebook)) {
       fbLink.href = data.contact_facebook;
     }
-    if (data.contact_name) {
-      document.getElementById("contact-name").textContent = data.contact_name;
-    }
+    setText("contact-name", data.contact_name);
   }
 
   if (callBtn && data.contact_phone) {
     callBtn.dataset.copy = data.contact_phone.replace(/[^0-9+]/g, "");
-    document.getElementById("contact-phone").textContent = data.contact_phone;
+    setText("contact-phone", data.contact_phone);
   }
 })();
